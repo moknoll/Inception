@@ -1,12 +1,14 @@
 # Inception
+*This project has been created as part of the 42 curriculum by mknoll.*
 
+## Description 
 This project is an introduction to Docker and Docker Compose. The goal is to create a multi-container application using `docker-compose`. The application consists of three services:
 
 -   **Nginx**: A web server that serves the content of the WordPress site.
 -   **WordPress**: A popular content management system (CMS).
 -   **MariaDB**: A database for the WordPress site.
 
-## Architecture
+### Architecture
 
 The services are linked together in a network. Nginx is the entry point and forwards requests to the WordPress service. WordPress connects to the MariaDB database to store and retrieve data.
 
@@ -14,7 +16,7 @@ The services are linked together in a network. Nginx is the entry point and forw
 -   **WordPress** uses FastCGI to communicate with Nginx on port 9000.
 -   **MariaDB** listens on port 3306 for database connections from WordPress.
 
-## Volumes
+### Volumes
 
 Two volumes are used to persist data:
 
@@ -23,8 +25,51 @@ Two volumes are used to persist data:
 
 This ensures that the data is not lost when the containers are stopped or removed.
 
-## Compilation & Setup
+### Virtual Machine vs Docker
 
+### Secrets vs Environment Variables
+**What .env Files Are**
+- A .env `file` is a simple text file that hold environment variables in `KEY=VAlue`
+- Environment variables are the standard way to pass  configuration into Docker containers without hard coding in your image. 
+- Docker Compose will read the .env file in the Compose directory and injects these variables into containers.
+- Example:
+  ```
+  DB_USER=admin
+  DB_PASSWORD=supersecret
+  ```
+Pros:
+- Easy to use
+- Works with compose and for docker run
+ 
+Cons:
+- Plain tect - can easily leak if accidentally commited to Git
+- Not designed for sensitive data - values can persist in image history if used in ENV in a dockefile.
+**What Docker Secrets Are**
+- Docker Secretes are a built-in, secure way to store sensitive data like passwords, encryption keys, certificates etc.
+- They are encrypted both at rest and in transit eithin Docker Swarm cluster() and only exposed to containers that you explicitly give permission to access.
+- When a continer has a secret, DOcker mounts it as a file inside the conatiner under:
+```
+/run/secrets/<secret_name>
+```
+Pros: 
+- More secure - encrypted and scoped only to services that need it
+- NOt shown in docker inspect ouput like env variables can be
+- Mounted in Memory not stored on disk inside the container
+Cons:
+- Only in Docker Swarm mode(services) - not for standalone containers by default
+- Your app must read secrets from files (not environment variables)
+### Key Security differences 
+- .env is a plain text - anything can read the file or the container environmetn can see the values(docker inspect)
+- Docker secrets are encrypted in storage and transit, and only available to services that neeed them, mounted in memory ad files reducing the risk of accidental leaks.
+### When to Use Which
+- Use .env foe non sernsitive configuration(port numbers, non-secret settings)
+- USe Docker secrets for sensitive information (password keys tokens) in production or shared enivronments. 
+
+### Docker Network vs Host Network 
+
+### Docker VOlumes vs Bind Mounts 
+
+## Instrucuction 
 1.  **Prerequisites**: You need to have Docker and Docker Compose installed on your machine.
 
 2.  **Environment Variables**: Create a `.env` file in the `srcs` directory with the following variables:
@@ -36,24 +81,33 @@ This ensures that the data is not lost when the containers are stopped or remove
     MYSQL_ROOT_PASSWORD=<your_database_root_password>
     ```
 
-3.  **Build and Run**: Navigate to the `srcs` directory and run the following command:
+3.  **Build and Run**: Navigate to the `Inception` directory and run the following command:
 
     ```bash
-    docker-compose up --build
+    make up
     ```
 
     This will build the images for the services and start the containers.
 
 ## Accessing the Application
 
-Once the containers are running, you can access the WordPress site by navigating to `https://localhost` in your web browser.
+Once the containers are running, you can access the WordPress site by navigating to `https://mknoll.42.fr` in your web browser.
 
 ## Stopping the Application
 
-To stop the application, run the following command in the `srcs` directory:
+To stop the application, run the following command in the `Inception` directory:
 
 ```bash
-docker-compose down
+make down
 ```
 
 This will stop and remove the containers, networks, and volumes.
+
+## Resources 
+- https://docs.docker.com/build/building/best-practices/
+- https://hub.docker.com/_/mariadb
+- https://github.com/MariaDB/mariadb-docker/blob/master/docker-entrypoint.sh?utm_source=chatgpt.com
+- https://github.com/docker/awesome-compose
+- https://docs.nginx.com/tls
+- https://www.cyberciti.biz/faq/configure-nginx-to-use-only-tls-1-2-and-1-3/
+- https://hostim.dev/learn/foundations/env-vars-secrets/

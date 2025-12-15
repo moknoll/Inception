@@ -115,9 +115,56 @@ When using a Docker Network (usually a Bridge Network), containers run in an Iso
 - Each container gets its own IP Adress.
 - Ports must explicitly published.
 - Containers can communicate with each otherby Container name.
-- Provides Network Isolation form the host. 
+- Provides Network Isolation form the host.
+Its More Secure, better fir multi Container Applications but wiht a slight Networking Overhead.
 
-### Docker VOlumes vs Bind Mounts 
+**Host Network**
+When using host networking, the container shares the hosts network stack. 
+- No seperate container ip
+- No port mapping needed
+- Containers uses the hosts IP and ports directly
+- Very high Performance
+Its the fastest networking but has no isolation and port conflicts can occure.
+
+**Key Differences**
+Docker network has an higher Security then Host Network as it has its Own Network Isolation, Ip adresses and Port Mapping is needed. <br>
+Host Network is perofrmance wise faster then Docker Network. 
+
+**When to Use which?**
+- Docker Network -> default choice, dafer scalable, recommended
+- Host Network -> prformace critical Apps or low level networking tools.
+
+### Docker Volumes vs Bind Mounts 
+**Docker Volumes**
+Docker Volumes are managed by Docker itself and stored in Dockers internal directory ont the host. 
+- Created and managed using Docker Commands
+- Location on host is abstracted away
+- Can be shared safely between containers
+- Persist even if containers are removed
+- Best choice for database data and persisten storage
+Thy are Portable, safer and cleaner but with less direct Control over host path. 
+
+**Bind Mounts**
+Bind Mounts map a specific file or directory on the host directly into the container. 
+- Uses an explicit host path (/home/<login>/data)
+- Tightly coupled to the host filesystem
+- Chenged refclet instantly both ways
+- Commonly used for deployment.
+It gives you full contol over host files, great for live code editing, but less portable and can accidently overwrite host data.
+
+**Key Differences**
+Docker volumes are managed by Docker, are highly Portable. as Bind Mounts have to be created by oneself and are not as portable. 
+
+**Conclusion**
+Docker volumes -> databases, production, backups 
+Bind Mounts -> local development, config files, live reload
+Volumes are Docker managed  and Protable, while bind mounts directly map host paths and are mainly used for development. 
+
+**Inception Case**
+In the Incception Project, Docker Volumes are used to persist MariaDB and Worpress data across container restarts, <br>
+while bind mounts are used for configuration files like Nginx configs to allow easy modification without rebuilfing images. 
+Persistent Data (DB, Wordpress files) -> Docker Volumes
+Configuration Files -> bind Mounts. 
 
 ## Instrucuction 
 1.  **Prerequisites**: You need to have Docker and Docker Compose installed on your machine.

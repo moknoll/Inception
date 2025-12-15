@@ -161,10 +161,7 @@ Bind Mounts -> local development, config files, live reload
 Volumes are Docker managed  and Protable, while bind mounts directly map host paths and are mainly used for development. 
 
 **Inception Case**
-In the Incception Project, Docker Volumes are used to persist MariaDB and Worpress data across container restarts, <br>
-while bind mounts are used for configuration files like Nginx configs to allow easy modification without rebuilfing images. 
-Persistent Data (DB, Wordpress files) -> Docker Volumes
-Configuration Files -> bind Mounts. 
+In this project, Docker volumes are used to persist data on the host machine under /home/<login>/data. MariaDB stores its database files in /home/<login>/data/mariadb and WordPress stores its website files in /home/<login>/data/wordpress. This ensures that all important data remains intact even if containers are removed or rebuilt, and meets the evaluation requirement for host-accessible persistent storage.
 
 ## Instrucuction 
 1.  **Prerequisites**: You need to have Docker and Docker Compose installed on your machine.

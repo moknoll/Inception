@@ -26,9 +26,53 @@ Two volumes are used to persist data:
 This ensures that the data is not lost when the containers are stopped or removed.
 
 ### Virtual Machine vs Docker
+**Virtual Machine**
+A Virtual Machine virtualizes an entire Computer
+- Run on top of a Hypervisor e.g VirtualBox
+- Each VM Includes:
+  - Its Own Kernel
+  - System Libraries + Applications
+Think of it as: one physical machine -> Many full computers
 
-### Secrets vs Environment Variables
-**What .env Files Are**
+**Docker (Containers)**
+Docker Uses OS-level virtualization 
+- Container shares the host OS kernel
+- Each Container includes: 
+  - Applications
+  - Required Libraries & dependencies
+Think of it as one OS -> many isolated processes
+
+**Architecture Comparision**
+Virtual Machine 
+Hardware
+└── Host OS
+    └── Hypervisor
+        └── Guest OS
+            └── App
+
+Docker (Container)
+Hardware
+└── Host OS (Kernel)
+    └── Docker Engine
+        └── Container (App + libs)
+**Performance And Ressource Usage**Docker containers are far more efficient than virtual machines. <br> Virtual machines usually take several minutes to deploy because they have to start an entire guest operating system, including its own kernel. Docker containers, <br> on the other hand, start within seconds since they do not have their own kernel and instead share the host system’s kernel. <br> Virtual machines also consume a significant amount of RAM due to the overhead of running a full operating system, whereas Docker containers are much more lightweight and only include the application and its required dependencies. <br>In summary, Docker containers are faster, more resource-efficient, and significantly more lightweight than virtual machines.
+
+**Use cases**
+When to use a Virtual Machine: 
+- Running Different operating systems
+- Strong Isolation, Security environments
+When to use Docker:
+- Microservices
+- CI/CD Pipelines
+- Fast Deployment & Scaling
+
+**Conclusion**
+- Docker Containers start in seconds and use fewer ressources because they share the host kernel.
+- Virtual Machines take longer to start since they run a full Guest OS.
+- VMs require more of ram and disk space than docker containers.
+- Overall Docker containers are faster, more lightweight and more efficietn than Vms.
+
+**Secrets vs Environment Variables*What .env Files Are**
 - A .env `file` is a simple text file that hold environment variables in `KEY=VAlue`
 - Environment variables are the standard way to pass  configuration into Docker containers without hard coding in your image. 
 - Docker Compose will read the .env file in the Compose directory and injects these variables into containers.
@@ -66,6 +110,12 @@ Cons:
 - USe Docker secrets for sensitive information (password keys tokens) in production or shared enivronments. 
 
 ### Docker Network vs Host Network 
+**Docker Network**
+When using a Docker Network (usually a Bridge Network), containers run in an Isolated virtual Network created by docker. 
+- Each container gets its own IP Adress.
+- Ports must explicitly published.
+- Containers can communicate with each otherby Container name.
+- Provides Network Isolation form the host. 
 
 ### Docker VOlumes vs Bind Mounts 
 

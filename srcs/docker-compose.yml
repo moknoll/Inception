@@ -21,7 +21,7 @@ services:
     container_name: wp-php
     restart: always
     volumes:
-      - ./web:/var/www/html
+      - /home/mknoll/data/wordpress:/var/www/html
     depends_on:
       - mariadb
     networks:
@@ -37,6 +37,8 @@ services:
     build: ./requirements/mariadb
     container_name: mariadb
     restart: always
+    volumes: 
+      - /home/mknoll/data/mariadb:/var/lib/mysql
     networks:
       - inception
     environment:

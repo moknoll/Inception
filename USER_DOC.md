@@ -23,7 +23,32 @@ To start the project:
    - [Docker Installation](https://docs.docker.com/get-docker/)  
    - [Docker Compose Installation](https://docs.docker.com/compose/install/)
 
-2. Use the provided **setup script** to generate credentials and environment files:
+2. Clone the Inception repository:
+
+```bash
+git clone https://github.com/<your_username>/Inception.git
+cd Inception
+```
+3. Verify that Docker is running:
+```bash
+docker --version
+docker compose version
+```
+4. Use the provided **setup script** to generate credentials and environment files.
+
+The Script does the following: 
+- Creates a secrets/ directory.
+- Generates secure random passwords for MySQL and WordPress using OpenSSL'
+- Restrict access to secrets (chmod 600)
+- Creates .env if they dont exist.
+- Adds .env and secrets/ to .gitignore
+
+To Create the **setup script**:
+```bash
+touch srcs/setup.sh
+chmod +x srcs/setup.sh
+```
+Then copy the following content into setup.sh
 
 ```bash
 mkdir -p secrets
@@ -51,7 +76,7 @@ cat > .gitignore <<'EOF'
 /.env
 EOF
 ```
-3. Navigate to the Inception directory and run
+5. Navigate to the Inception directory and run
 ```
 make up
 ```

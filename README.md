@@ -200,19 +200,17 @@ This ensures important data remains intact even if containers are rebuilt.
 ---
 ## Instructions
 
-1. **Prerequisites:** Make sure Docker and Docker Compose are installed.  
-   You can follow the official guides:  
-   - [Docker Installation](https://docs.docker.com/get-docker/)  
-   - [Docker Compose Installation](https://docs.docker.com/compose/install/)
+For detailed instructions on starting, stopping, and managing the Inception project, please refer to the [User Documentation](USER_DOC.md).  
 
-2. **Environment Variables:** Create a `.env` file in the `srcs` directory with the required variables (see the `srcs/.env.example` for reference).
+It covers:
 
-3. **Build and Run:** Navigate to the `Inception` directory and run:
+- Understanding what services are provided by the stack.  
+- Starting and stopping the project.  
+- Accessing the website and the WordPress administration panel.  
+- Locating and managing credentials.  
+- Checking that the services are running correctly.
 
-```bash
-make up
-```
-This will stop and remove the containers, networks, and volumes.
+> Note: A setup script is provided to generate secure credentials and environment files. Please follow the instructions in the User Documentation to use it.
 
 ## Resources 
 - https://docs.docker.com/build/building/best-practices/

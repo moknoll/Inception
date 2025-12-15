@@ -1,67 +1,81 @@
 # Inception
 *This project has been created as part of the 42 curriculum by mknoll.*
 
-## Description 
+## Description
 This project is an introduction to Docker and Docker Compose. The goal is to create a multi-container application using `docker-compose`. The application consists of three services:
 
--   **Nginx**: A web server that serves the content of the WordPress site.
--   **WordPress**: A popular content management system (CMS).
--   **MariaDB**: A database for the WordPress site.
+- **Nginx**: A web server that serves the content of the WordPress site.  
+- **WordPress**: A popular content management system (CMS).  
+- **MariaDB**: A database for the WordPress site.  
 
 ### Architecture
-
 The services are linked together in a network. Nginx is the entry point and forwards requests to the WordPress service. WordPress connects to the MariaDB database to store and retrieve data.
 
--   **Nginx** listens on port 443 (HTTPS).
--   **WordPress** uses FastCGI to communicate with Nginx on port 9000.
--   **MariaDB** listens on port 3306 for database connections from WordPress.
+- **Nginx** listens on port 443 (HTTPS).  
+- **WordPress** uses FastCGI to communicate with Nginx on port 9000.  
+- **MariaDB** listens on port 3306 for database connections from WordPress.  
 
 ### Volumes
-
 Two volumes are used to persist data:
 
--   `wordpress_data`: Stores the WordPress files.
--   `mariadb_data`: Stores the MariaDB database files.
+- `wordpress_data`: Stores the WordPress files.  
+- `mariadb_data`: Stores the MariaDB database files.  
 
-This ensures that the data is not lost when the containers are stopped or removed.
+This ensures that data is not lost when the containers are stopped or removed.
 
-### Virtual Machine vs Docker
+---
+
+## Virtual Machine vs Docker
+
+### Virtual Machine
+A Virtual Machine virtualizes an entire computer.
+
+- Runs on top of a hypervisor (e.g., VirtualBox).  
+- Each VM includes:
+  - Its own kernel  
+  - System libraries and applications  
+
+Think of it as: **one physical machine → many full computers**  
+
+### Docker (Containers)
+Docker uses OS-level virtualization.
+
+- Containers share the host OS kernel.  
+- Each container includes:
+  - Applications  
+  - Required libraries and dependencies  
+
+Think of it as: **one OS → many isolated processes**  
+
+### Architecture Comparison
 **Virtual Machine**
-A Virtual Machine virtualizes an entire Computer
-- Run on top of a Hypervisor e.g VirtualBox
-- Each VM Includes:
-  - Its Own Kernel
-  - System Libraries + Applications
-Think of it as: one physical machine -> Many full computers
 
-**Docker (Containers)**
-Docker Uses OS-level virtualization 
-- Container shares the host OS kernel
-- Each Container includes: 
-  - Applications
-  - Required Libraries & dependencies
-Think of it as one OS -> many isolated processes
-
-**Architecture Comparision**
-Virtual Machine 
-Hardware
+``` Hardware
 └── Host OS
     └── Hypervisor
         └── Guest OS
             └── App
-
-Docker (Container)
-Hardware
+```
+**Docker**
+```Hardware
 └── Host OS (Kernel)
     └── Docker Engine
         └── Container (App + libs)
-**Performance And Ressource Usage**Docker containers are far more efficient than virtual machines. <br> Virtual machines usually take several minutes to deploy because they have to start an entire guest operating system, including its own kernel. Docker containers, <br> on the other hand, start within seconds since they do not have their own kernel and instead share the host system’s kernel. <br> Virtual machines also consume a significant amount of RAM due to the overhead of running a full operating system, whereas Docker containers are much more lightweight and only include the application and its required dependencies. <br>In summary, Docker containers are faster, more resource-efficient, and significantly more lightweight than virtual machines.
+```
+### Performance and Resource Usage
+Docker containers are far more efficient than virtual machines:
 
-**Use cases**
-When to use a Virtual Machine: 
-- Running Different operating systems
-- Strong Isolation, Security environments
-When to use Docker:
+- VMs take several minutes to deploy since they start an entire guest OS.  
+- Docker containers start within seconds as they share the host OS kernel.  
+- VMs consume more RAM due to OS overhead, while Docker containers are lightweight.  
+
+**Conclusion:** Docker containers are faster, more resource-efficient, and significantly lighter than VMs.
+
+### Use Cases
+- **Virtual Machines:** Running different OSes, strong isolation, secure environments.  
+- **Docker:** Microservices, CI/CD pipelines, fast deployment and scaling.  
+
+### When to use Docker:
 - Microservices
 - CI/CD Pipelines
 - Fast Deployment & Scaling
@@ -72,129 +86,132 @@ When to use Docker:
 - VMs require more of ram and disk space than docker containers.
 - Overall Docker containers are faster, more lightweight and more efficietn than Vms.
 
-**Secrets vs Environment Variables*What .env Files Are**
-- A .env `file` is a simple text file that hold environment variables in `KEY=VAlue`
-- Environment variables are the standard way to pass  configuration into Docker containers without hard coding in your image. 
-- Docker Compose will read the .env file in the Compose directory and injects these variables into containers.
-- Example:
+### .env Files
+A `.env` file is a simple text file that holds environment variables in the format:
+```
+KEY=VALUE
+```
+
+Environment variables are used to pass configuration into Docker containers without hard-coding them into images. Docker Compose automatically injects these variables into containers.
+
+**Example:**
+
   ```
   DB_USER=admin
   DB_PASSWORD=supersecret
   ```
-Pros:
-- Easy to use
-- Works with compose and for docker run
- 
-Cons:
-- Plain tect - can easily leak if accidentally commited to Git
-- Not designed for sensitive data - values can persist in image history if used in ENV in a dockefile.
-**What Docker Secrets Are**
-- Docker Secretes are a built-in, secure way to store sensitive data like passwords, encryption keys, certificates etc.
-- They are encrypted both at rest and in transit eithin Docker Swarm cluster() and only exposed to containers that you explicitly give permission to access.
-- When a continer has a secret, DOcker mounts it as a file inside the conatiner under:
+**Pros:**
+- Easy to use.  
+- Works with Compose and `docker run`.  
+
+**Cons:**
+- Plain text — can leak if committed to Git.  
+- Not secure for sensitive data — values can persist in image history.
+
+### Docker Secrets
+Docker Secrets provide a secure way to store sensitive data like passwords, encryption keys, and certificates.
+
+- Secrets are encrypted at rest and in transit within Docker Swarm.  
+- Only exposed to containers explicitly granted access.  
+- Mounted as files inside the container:  
+
 ```
 /run/secrets/<secret_name>
 ```
-Pros: 
-- More secure - encrypted and scoped only to services that need it
-- NOt shown in docker inspect ouput like env variables can be
-- Mounted in Memory not stored on disk inside the container
-Cons:
-- Only in Docker Swarm mode(services) - not for standalone containers by default
-- Your app must read secrets from files (not environment variables)
-### Key Security differences 
-- .env is a plain text - anything can read the file or the container environmetn can see the values(docker inspect)
-- Docker secrets are encrypted in storage and transit, and only available to services that neeed them, mounted in memory ad files reducing the risk of accidental leaks.
+
+**Pros:**
+- Secure — encrypted and scoped to services that need them.  
+- Not visible via `docker inspect`.  
+- Mounted in memory, not stored on disk inside the container.  
+
+**Cons:**
+- Only available in Docker Swarm mode.  
+- Applications must read secrets from files, not environment variables.
+
+### Key Security Differences
+- `.env` files are plain text and visible in container environments.  
+- Docker secrets are encrypted, scoped, and mounted in memory.
+
 ### When to Use Which
-- Use .env foe non sernsitive configuration(port numbers, non-secret settings)
-- USe Docker secrets for sensitive information (password keys tokens) in production or shared enivronments. 
+- Use `.env` for non-sensitive configuration (ports, non-secret settings).  
+- Use Docker secrets for sensitive information (passwords, keys, tokens) in production or shared environments.
 
-### Docker Network vs Host Network 
-**Docker Network**
-When using a Docker Network (usually a Bridge Network), containers run in an Isolated virtual Network created by docker. 
-- Each container gets its own IP Adress.
-- Ports must explicitly published.
-- Containers can communicate with each otherby Container name.
-- Provides Network Isolation form the host.
-Its More Secure, better fir multi Container Applications but wiht a slight Networking Overhead.
+---
 
-**Host Network**
-When using host networking, the container shares the hosts network stack. 
-- No seperate container ip
-- No port mapping needed
-- Containers uses the hosts IP and ports directly
-- Very high Performance
-Its the fastest networking but has no isolation and port conflicts can occure.
+## Docker Network vs Host Network
 
-**Key Differences**
-Docker network has an higher Security then Host Network as it has its Own Network Isolation, Ip adresses and Port Mapping is needed. <br>
-Host Network is perofrmance wise faster then Docker Network. 
+### Docker Network
+- Containers run in an isolated virtual network.  
+- Each container gets its own IP address.  
+- Ports must be explicitly published.  
+- Containers communicate by container name.  
+- Provides network isolation from the host.  
 
-**When to Use which?**
-- Docker Network -> default choice, dafer scalable, recommended
-- Host Network -> prformace critical Apps or low level networking tools.
+**Pros:** Secure and scalable.  
+**Cons:** Slight networking overhead.
 
-### Docker Volumes vs Bind Mounts 
-**Docker Volumes**
-Docker Volumes are managed by Docker itself and stored in Dockers internal directory ont the host. 
-- Created and managed using Docker Commands
-- Location on host is abstracted away
-- Can be shared safely between containers
-- Persist even if containers are removed
-- Best choice for database data and persisten storage
-Thy are Portable, safer and cleaner but with less direct Control over host path. 
+### Host Network
+- Containers share the host network stack.  
+- No separate container IP; no port mapping needed.  
+- Containers use host IP and ports directly.  
 
-**Bind Mounts**
-Bind Mounts map a specific file or directory on the host directly into the container. 
-- Uses an explicit host path (/home/<login>/data)
-- Tightly coupled to the host filesystem
-- Chenged refclet instantly both ways
-- Commonly used for deployment.
-It gives you full contol over host files, great for live code editing, but less portable and can accidently overwrite host data.
+**Pros:** High performance.  
+**Cons:** No isolation; potential port conflicts.
 
-**Key Differences**
-Docker volumes are managed by Docker, are highly Portable. as Bind Mounts have to be created by oneself and are not as portable. 
+### Key Differences
+- Docker network → higher security, isolation, and port mapping required.  
+- Host network → faster performance but no isolation.
 
-**Conclusion**
-Docker volumes -> databases, production, backups 
-Bind Mounts -> local development, config files, live reload
-Volumes are Docker managed  and Protable, while bind mounts directly map host paths and are mainly used for development. 
+### Recommended Usage
+- Docker network → default choice, secure, scalable.  
+- Host network → performance-critical apps or low-level networking tools.
 
-**Inception Case**
-In this project, Docker volumes are used to persist data on the host machine under /home/<login>/data. MariaDB stores its database files in /home/<login>/data/mariadb and WordPress stores its website files in /home/<login>/data/wordpress. This ensures that all important data remains intact even if containers are removed or rebuilt, and meets the evaluation requirement for host-accessible persistent storage.
+---
 
-## Instrucuction 
-1.  **Prerequisites**: You need to have Docker and Docker Compose installed on your machine.
+## Docker Volumes vs Bind Mounts
 
-2.  **Environment Variables**: Create a `.env` file in the `srcs` directory with the following variables:
+### Docker Volumes
+- Managed by Docker, stored in Docker’s internal directory.  
+- Location on the host is abstracted.  
+- Can be shared between containers.  
+- Persist even if containers are removed.  
 
-    ```
-    MYSQL_USER=<your_database_user>
-    MYSQL_PASSWORD=<your_database_password>
-    MYSQL_DATABASE=<your_database_name>
-    MYSQL_ROOT_PASSWORD=<your_database_root_password>
-    ```
+**Use case:** Databases, persistent storage, production.
 
-3.  **Build and Run**: Navigate to the `Inception` directory and run the following command:
+### Bind Mounts
+- Maps a specific host file or directory into the container.  
+- Directly coupled to host filesystem.  
+- Changes reflect immediately both ways.  
 
-    ```bash
-    make up
-    ```
+**Use case:** Local development, configuration files, live code editing.
 
-    This will build the images for the services and start the containers.
+### Key Differences
+- Volumes → managed by Docker, portable, safe.  
+- Bind mounts → host-dependent, less portable, full control over files.
 
-## Accessing the Application
+### Inception Case
+In this project, Docker volumes persist data under `/home/<login>/data`:
 
-Once the containers are running, you can access the WordPress site by navigating to `https://mknoll.42.fr` in your web browser.
+- MariaDB → `/home/<login>/data/mariadb`  
+- WordPress → `/home/<login>/data/wordpress`  
 
-## Stopping the Application
+This ensures important data remains intact even if containers are rebuilt.
 
-To stop the application, run the following command in the `Inception` directory:
+---
+## Instructions
+
+1. **Prerequisites:** Make sure Docker and Docker Compose are installed.  
+   You can follow the official guides:  
+   - [Docker Installation](https://docs.docker.com/get-docker/)  
+   - [Docker Compose Installation](https://docs.docker.com/compose/install/)
+
+2. **Environment Variables:** Create a `.env` file in the `srcs` directory with the required variables (see the `srcs/.env.example` for reference).
+
+3. **Build and Run:** Navigate to the `Inception` directory and run:
 
 ```bash
-make down
+make up
 ```
-
 This will stop and remove the containers, networks, and volumes.
 
 ## Resources 
@@ -205,3 +222,4 @@ This will stop and remove the containers, networks, and volumes.
 - https://docs.nginx.com/tls
 - https://www.cyberciti.biz/faq/configure-nginx-to-use-only-tls-1-2-and-1-3/
 - https://hostim.dev/learn/foundations/env-vars-secrets/
+- https://docs.docker.com/get-started/workshop/05_persisting_data/

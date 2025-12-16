@@ -18,6 +18,8 @@ clean:
 
 fclean: down
 	docker system prune -a --volumes -f
+	rm -rf ./srcs/data/*
+	rm -rf ./srcs/web/*
 
 re: fclean all
 

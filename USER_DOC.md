@@ -46,8 +46,8 @@ The Script does the following:
 
 To Create the **setup script**:
 ```bash
-touch srcs/setup.sh
-chmod +x srcs/setup.sh
+touch setup.sh
+chmod +x setup.sh
 ```
 Then copy the following content into setup.sh
 
@@ -97,25 +97,17 @@ chmod 600 ./secrets/*.txt
 
 # Create .env file in srcs directory
 cat > ./srcs/.env <<'EOF'
->>>>>>> temp-fix
 WORDPRESS_DB_HOST=mariadb
 WORDPRESS_DB_USER=wp_user
 WORDPRESS_DB_NAME=wordpress
 MYSQL_DATABASE=wordpress
 MYSQL_USER=wp_user
-WP_URL=mknoll.42.fr
-WP_TITLE=inception
 WP_ADMIN_USER=admin
 WP_ADMIN_EMAIL=admin@inception.local
 EOF
 
-<<<<<<< HEAD
-# Add secrets and .env to .gitignore
-cat > .gitignore <<'EOF'
-=======
 # Add secrets and .env to .gitignore (in main project folder)
 cat > ../.gitignore <<'EOF'
->>>>>>> temp-fix
 /secrets/
 /srcs/.env
 .DS_Store

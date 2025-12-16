@@ -6,7 +6,7 @@ RUN apt update && apt install -y mariadb-server && \
     rm -rf /var/lib/apt/lists/*
 
 # Copy custom configuration file and initialization SQL script into the container
-COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
+COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/.
 COPY ./tools/init.sql /etc/mysql/init.sql
 
 # Copy script to initialize and start MariaDB
@@ -19,4 +19,4 @@ RUN mkdir /run/mysqld
 EXPOSE 3306
 
 # Default command to run MariaDB server in foreground
-CMD [ "mysqld_safe" ]
+CMD [ "./init-mdb.sh" ]

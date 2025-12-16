@@ -76,7 +76,11 @@ cat > .gitignore <<'EOF'
 /.env
 EOF
 ```
-5. Navigate to the Inception directory and run
+5. Run the setup script with following command 
+```bash
+./srcs/setup.sh
+```
+6. Navigate to the Inception directory and run
 ```
 make up
 ```

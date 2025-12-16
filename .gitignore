@@ -1,5 +1,2 @@
-.env 
-
-/secrets
-
-/srcs/requirements/web 
+/secrets/
+/srcs/.env

@@ -24,6 +24,7 @@ To start the project:
    - [Docker Compose Installation](https://docs.docker.com/compose/install/)
 
 2. Clone the Inception repository:
+<<<<<<< HEAD
 
 ```bash
 git clone https://github.com/<your_username>/Inception.git
@@ -51,29 +52,75 @@ chmod +x srcs/setup.sh
 Then copy the following content into setup.sh
 
 ```bash
-mkdir -p secrets
+git clone https://github.com/<your_username>/Inception.git
+cd Inception
+```
+3. Verify that Docker is running:
+```bash
+docker --version
+docker compose version
+```
+4. Use the provided **setup script** to generate credentials and environment files.
+
+The Script does the following: 
+- Creates a secrets/ directory.
+- Generates secure random passwords for MySQL and WordPress using OpenSSL'
+- Restrict access to secrets (chmod 600)
+- Creates .env if they dont exist.
+- Adds .env and secrets/ to .gitignore
+
+To Create the **setup script**:
+```bash
+touch setup.sh
+chmod +x setup.sh
+```
+Then copy the following content into setup.sh
+
+```bash
+#!/bin/bash
+
+# Create data directories on host (as required by project)
+mkdir -p /home/$USER/data/mariadb
+mkdir -p /home/$USER/data/wordpress
+
+# Create secrets directory in main project folder
+mkdir -p ./secrets
 
 # Generate secure random passwords (OpenSSL)
-openssl rand -base64 18 > secrets/mysql_root_password.txt
-openssl rand -base64 18 > secrets/mysql_password.txt
-openssl rand -base64 18 > secrets/wp_db_password.txt
+openssl rand -base64 18 > ./secrets/mysql_root_password.txt
+openssl rand -base64 18 > ./secrets/mysql_password.txt
+openssl rand -base64 18 > ./secrets/wp_db_password.txt
+openssl rand -base64 18 > ./secrets/wp_admin_password.txt
 
 # Restrict access to secrets (owner only)
-chmod 600 secrets/*.txt
+chmod 600 ./secrets/*.txt
 
-# Create .env and .env.example files if not present
-cat > .env <<'EOF'
+# Create .env file in srcs directory
+cat > ./srcs/.env <<'EOF'
+>>>>>>> temp-fix
 WORDPRESS_DB_HOST=mariadb
 WORDPRESS_DB_USER=wp_user
 WORDPRESS_DB_NAME=wordpress
 MYSQL_DATABASE=wordpress
 MYSQL_USER=wp_user
+WP_URL=mknoll.42.fr
+WP_TITLE=inception
+WP_ADMIN_USER=admin
+WP_ADMIN_EMAIL=admin@inception.local
 EOF
 
+<<<<<<< HEAD
 # Add secrets and .env to .gitignore
 cat > .gitignore <<'EOF'
+=======
+# Add secrets and .env to .gitignore (in main project folder)
+cat > ../.gitignore <<'EOF'
+>>>>>>> temp-fix
 /secrets/
-/.env
+/srcs/.env
+.DS_Store
+*/.DS_Store
+/srcs/web/
 EOF
 ```
 5. Run the setup script with following command 

@@ -32,7 +32,7 @@ services:
       - WP_URL=${WP_URL}
       - WP_TITLE=${WP_TITLE}
       - WP_ADMIN_USER=${WP_ADMIN_USER}
-      - WP_ADMIN_PASSWORD=/run/secrets/wp_admin_password
+      - WP_ADMIN_PASSWORD_FILE=/run/secrets/wp_admin_password
       - WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL}
     secrets: 
       - wp_db_password
@@ -53,7 +53,6 @@ services:
     secrets: 
       - mysql_root_password
       - mysql_password
-
 secrets: 
   mysql_root_password: 
     file: ../secrets/mysql_root_password.txt

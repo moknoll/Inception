@@ -7,7 +7,6 @@ RUN apt update && apt install -y mariadb-server && \
 
 # Copy custom configuration file and initialization SQL script into the container
 COPY ./conf/50-server.cnf /etc/mysql/mariadb.conf.d/.
-COPY ./tools/init.sql /etc/mysql/init.sql
 
 # Copy script to initialize and start MariaDB
 COPY ./tools/init-mdb.sh /init-mdb.sh

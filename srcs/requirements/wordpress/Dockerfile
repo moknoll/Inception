@@ -10,4 +10,6 @@ COPY ./conf/www.conf /etc/php/8.2/fpm/pool.d/www.conf
 COPY ./tools/init-wp.sh /init-wp.sh
 RUN chmod +x /init-wp.sh
 
+EXPOSE 9000
+
 CMD [ "/init-wp.sh" ]

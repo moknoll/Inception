@@ -1,24 +1,36 @@
 #!/bin/bash
 cd /var/www/html
 
-# # Read passwords from Docker secrets
-# DB_PASSWORD=$(cat /run/secrets/wp_db_password)
-# ADMIN_PASSWORD=$(cat /run/secrets/wp_admin_password)
+# Check if WordPress is already installed
+if [ ! -f wp-config.php ]; then
 
-# curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-# chmod +x wp-cli.phar
-# ./wp-cli.phar core download --allow-root
-# ./wp-cli.phar config create --dbname=$WORDPRESS_DB_NAME --dbuser=$WORDPRESS_DB_USER --dbpass=$DB_PASSWORD --dbhost=$WORDPRESS_DB_HOST --allow-root
-# ./wp-cli.phar core install --url=mknoll.42.fr --title=$WP_TITLE --admin_user=$WP_ADMIN_USER --admin_password=$ADMIN_PASSWORD --admin_email=$WP_ADMIN_EMAIL --allow-root
+    # 1. WP-CLI Download and Installation
+    curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    chmod +x wp-cli.phar
 
-# php-fpm8.2 -F
+    # Wait for a few seconds
+    sleep 10
 
-#!/bin/bash
-cd /var/www/html
-curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-chmod +x wp-cli.phar
-./wp-cli.phar core download --allow-root
-./wp-cli.phar config create --dbname=wordpress --dbuser=wpuser --dbpass=password --dbhost=mariadb --allow-root
-./wp-cli.phar core install --url=mknoll.42.fr --title=Inception --admin_user=admin --admin_password=admin --admin_email=admin@admin.com --allow-root
+    # 2. WordPress Core Download
+    ./wp-cli.phar core download --allow-root
 
-php-fpm8.2 -F
+    echo "Debug: DB Password is: $(cat /run/secrets/wp_db_password)"
+    # 3. wp-config.php Creation
+    ./wp-cli.phar config create \
+     --dbname=${WORDPRESS_DB_NAME} \
+     --dbuser=${WORDPRESS_DB_USER} \
+     --dbpass=$(cat /run/secrets/wp_db_password) \
+     --dbhost=${WORDPRESS_DB_HOST} \
+     --allow-root
+
+    # 4. Database Installation
+    ./wp-cli.phar core install \
+     --url="mknoll.42.fr" \
+     --title="Inception" \
+     --admin_user=${WP_ADMIN_USER} \
+     --admin_password=$(cat /run/secrets/wp_admin_password) \
+     --admin_email=${WP_ADMIN_EMAIL} \
+     --allow-root
+fi 
+
+exec php-fpm8.2 -F

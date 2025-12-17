@@ -12,8 +12,6 @@ services:
     depends_on:
       - mariadb
       - wordpress
-    networks:
-      - inception
   wordpress: 
     build: ./requirements/wordpress
     container_name: wp-php
@@ -22,8 +20,6 @@ services:
       - ./web:/var/www/html
     depends_on:
       - mariadb
-    networks:
-      - inception
     environment:
       - WORDPRESS_DB_HOST=${WORDPRESS_DB_HOST}
       - WORDPRESS_DB_USER=${WORDPRESS_DB_USER}
@@ -41,8 +37,6 @@ services:
     restart: always
     volumes:
       - ./data:/var/lib/mysql
-    networks:
-      - inception
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_USER=${MYSQL_USER}
@@ -60,5 +54,3 @@ secrets:
     file: ../secrets/wp_db_password.txt
   wp_admin_password:
     file: ../secrets/wp_admin_password.txt
-networks:
-  inception:

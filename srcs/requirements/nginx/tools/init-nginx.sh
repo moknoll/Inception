@@ -1,5 +1,4 @@
 #!/bin/sh
-
 set -e
 
 # Create SSL certificates directory

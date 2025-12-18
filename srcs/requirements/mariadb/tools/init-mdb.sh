@@ -37,11 +37,8 @@ GRANT ALL PRIVILEGES ON $MYSQL_DATABASE.* TO '$MYSQL_USER'@'%';
 FLUSH PRIVILEGES;
 EOF
     
-    # SQL ausführen
     /usr/sbin/mysqld --user=mysql --bootstrap < $tfile
     rm -f $tfile
 fi
 
-# 3. Server starten
-echo starting mariadb server...
 exec /usr/sbin/mysqld --user=mysql --console

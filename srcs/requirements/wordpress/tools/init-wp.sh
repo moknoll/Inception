@@ -33,4 +33,5 @@ if [ ! -f wp-config.php ]; then
      --allow-root
 fi 
 
+# Start PHP-FPM in foreground
 exec php-fpm8.2 -F

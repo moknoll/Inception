@@ -7,6 +7,14 @@
 7. (Optional) Troubleshooting
 
 
+relevant commands 
+in /srcs 
+
+docker exec -it nginx openssl s_client -connect localhost:443 -tls1_3
+
+to. check tls is running 
+
+
 Set up the environment from scratch (prerequisites, configuration files, se-
 crets).
 ◦ Build and launch the project using the Makefile and Docker Compose.

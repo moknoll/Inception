@@ -17,6 +17,5 @@ if [ "$#" -eq 0 ]; then
   echo "Starting nginx..."
   exec nginx -g 'daemon off;'
 else
-  # Ermöglicht z.B.: docker run image nginx -t
   exec "$@"
 fi

@@ -18,4 +18,4 @@ RUN mkdir /run/mysqld
 EXPOSE 3306
 
 # Default command to run MariaDB server in foreground
-CMD [ "./init-mdb.sh" ]
+ENTRYPOINT [ "./init-mdb.sh" ]

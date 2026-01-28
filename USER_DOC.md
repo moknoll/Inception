@@ -7,15 +7,26 @@ This document explains, in clear and simple terms, how an end user or administra
 ## 1. Services Provided by the Stack
 The Inception stack consists of three main services:
 
-- **Nginx**: Web server that serves the WordPress site.  
-- **WordPress**: Content Management System (CMS) for managing website content.  
+- **Nginx**: Web server that serves the WordPress site (Entry Point, Port 443).
+- **WordPress**: Content Management System (CMS) for managing website content (PHP-FPM).
 - **MariaDB**: Database service that stores WordPress data.
 
-Nginx acts as the entry point and forwards requests to WordPress. WordPress communicates with MariaDB to store and retrieve data.
+Nginx acts as the secure entry point and forwards PHP requests to WordPress. WordPress communicates with MariaDB to store and retrieve data.
 
 ---
 
-## 2. Starting the Project
+## 2. Prerequisites & Configuration
+
+Before starting, map the project URL to your localhost.
+Open your hosts file (on Linux/Mac: `/etc/hosts`) and add the following line:
+
+```text
+127.0.0.1 mknoll.42.fr
+```
+
+---
+
+## 3. Starting the Project
 To start the project:
 
 1. Ensure Docker and Docker Compose are installed.  
@@ -24,10 +35,9 @@ To start the project:
    - [Docker Compose Installation](https://docs.docker.com/compose/install/)
 
 2. Clone the Inception repository:
-<<<<<<< HEAD
 
 ```bash
-git clone https://github.com/<your_username>/Inception.git
+git clone https://github.com/moknoll/Inception.git
 cd Inception
 ```
 3. Verify that Docker is running:
@@ -37,140 +47,74 @@ docker compose version
 ```
 4. Use the provided **setup script** to generate credentials and environment files.
 
-The Script does the following: 
-- Creates a secrets/ directory.
-- Generates secure random passwords for MySQL and WordPress using OpenSSL'
-- Restrict access to secrets (chmod 600)
-- Creates .env if they dont exist.
-- Adds .env and secrets/ to .gitignore
+The setup script (`setup.sh`) does the following: 
+- Creates a `secrets/` directory.
+- Generates secure random passwords for MySQL and WordPress using OpenSSL.
+- Restricts access to secrets (chmod 600).
+- Creates `.env` if it doesn't exist.
+- Adds `.env` and `secrets/` to `.gitignore`.
 
-To Create the **setup script**:
+Run the **setup script**:
 ```bash
-touch setup.sh
-chmod +x setup.sh
+bash setup.sh
+# or
+chmod +x setup.sh && ./setup.sh
 ```
-Then copy the following content into setup.sh
 
+5. Build and start the containers:
+   Navigate to the root directory (where the Makefile is) and run:
+   ```bash
+   make up
+   ```
+   This builds the Docker images and starts all containers in the background.
+
+## 4. Stopping the Project
+
+To stop the containers (data remains persistent):
 ```bash
-git clone https://github.com/<your_username>/Inception.git
-cd Inception
-```
-3. Verify that Docker is running:
-```bash
-docker --version
-docker compose version
-```
-4. Use the provided **setup script** to generate credentials and environment files.
-
-The Script does the following: 
-- Creates a secrets/ directory.
-- Generates secure random passwords for MySQL and WordPress using OpenSSL'
-- Restrict access to secrets (chmod 600)
-- Creates .env if they dont exist.
-- Adds .env and secrets/ to .gitignore
-
-To Create the **setup script**:
-```bash
-touch setup.sh
-chmod +x setup.sh
-```
-Then copy the following content into setup.sh
-
-```bash
-#!/bin/bash
-
-# Create data directories on host (as required by project)
-mkdir -p /home/$USER/data/mariadb
-mkdir -p /home/$USER/data/wordpress
-
-# Create secrets directory in main project folder
-mkdir -p ./secrets
-
-# Generate secure random passwords (OpenSSL)
-openssl rand -base64 18 > ./secrets/mysql_root_password.txt
-openssl rand -base64 18 > ./secrets/mysql_password.txt
-cp ./secrets/mysql_password.txt ./secrets/wp_db_password.txt
-openssl rand -base64 18 > ./secrets/wp_admin_password.txt
-
-# Restrict access to secrets (owner only)
-chmod 600 ./secrets/*.txt
-
-# Create .env file in srcs directory
-cat > ./srcs/.env <<'EOF'
-WORDPRESS_DB_HOST=mariadb
-WORDPRESS_DB_USER=wp_user
-WORDPRESS_DB_NAME=wordpress
-MYSQL_DATABASE=wordpress
-MYSQL_USER=wp_user
-WP_ADMIN_USER=admin
-WP_ADMIN_EMAIL=admin@inception.local
-EOF
-
-# Add secrets and .env to .gitignore (in main project folder)
-cat > ../.gitignore <<'EOF'
-/secrets/
-/srcs/.env
-.DS_Store
-*/.DS_Store
-/srcs/web/
-EOF
-```
-5. Run the setup script with following command 
-```bash
-./srcs/setup.sh
-```
-6. Navigate to the Inception directory and run
-```
-make up
-```
-This Builds the images and starts all containers. 
-
-## 3. Stopping the Project
-To stop the stack, run: 
-```
 make down
 ```
-This stops and removes containers, networks and volumes. 
 
-## 4. Accesing thr Website and Administration Panel
-- **Website**:Open your browser and navigate to:
-```
-https://yourlogin.42.fr
-```
-- **WordPress Admin Panel**: Go to:
-```
-https://yourlogin.42.fr/wp-admin
-```
-## 5. Locating and Managing Credentials
-- The setup scritp secutes credentials stored in the /secrets directory:
+To stop and **remove all data** (clean slate):
 ```bash
-secrets/mysql_root_password.txt
-secrets/mysql_password.txt
-secrets/wp_db_password.txt
+make fclean
 ```
-- Environment variables for database access are stored in .env.
-- Sensitive data is restricted to owner-only access (chmod 600).
-- .env and /secrets are ignonres by Git via .gitignore
 
-## 6. Checking Service Status
-To Verify the services are running correctly: 
-1. List running Docker Containers:
-```bash
-docker ps
-```
-Expected Container 
-- nginx
-- wordpress
-- mariadb
-   
-2.Check logs for each service if needed
-```bash
-docker logs <container_name>
-```
-3. Access website to confirm WordPress loads correctly.
-```
-https://yourlogin.42.fr
-```
-## Notes
-- Make sure ports 433(HTTPS) and 3306(MariaDB) are available on your host.
-- Docker Voulmes (wordpress_data and mariadb_data) ensure persistent data even if containers are rebuilt.
+## 5. Accessing the Website and Administration Panel
+
+- **Website**: Open your browser and navigate to:
+  https://mknoll.42.fr
+
+  *(Note: You might see a security warning because of the self-signed certificate. Accept it to proceed.)*
+
+- **WordPress Admin Panel**:
+  https://mknoll.42.fr/wp-admin
+
+## 6. Locating and Managing Credentials
+
+The setup script secures credentials and stores them in the `secrets/` directory:
+
+- **Roots:** `secrets/mysql_root_password.txt`
+- **Database:** `secrets/mysql_password.txt` & `secrets/wp_db_password.txt`
+- **Admin:** `secrets/wp_admin_password.txt`
+
+Environment variables are stored in `srcs/.env`.
+*Note: These files are ignored by Git and protected via permissions (chmod 600).*
+
+## 7. Checking Service Status
+
+To verify the services are running correctly:
+
+1. **List running containers:**
+   ```bash
+   docker ps
+   ```
+   You should see `nginx`, `wp-php` (or wordpress), and `mariadb` running.
+
+2. **Check logs:**
+   If something isn't working, check the logs of the specific service:
+   ```bash
+   docker logs nginx
+   docker logs wp-php
+   docker logs mariadb
+   ```

@@ -69,22 +69,15 @@ Docker containers are far more efficient than virtual machines:
 - Docker containers start within seconds as they share the host OS kernel.  
 - VMs consume more RAM due to OS overhead, while Docker containers are lightweight.  
 
-**Conclusion:** Docker containers are faster, more resource-efficient, and significantly lighter than VMs.
-
 ### Use Cases
 - **Virtual Machines:** Running different OSes, strong isolation, secure environments.  
 - **Docker:** Microservices, CI/CD pipelines, fast deployment and scaling.  
 
-### When to use Docker:
-- Microservices
-- CI/CD Pipelines
-- Fast Deployment & Scaling
-
-**Conclusion**
-- Docker Containers start in seconds and use fewer ressources because they share the host kernel.
-- Virtual Machines take longer to start since they run a full Guest OS.
-- VMs require more of ram and disk space than docker containers.
-- Overall Docker containers are faster, more lightweight and more efficietn than Vms.
+### Conclusion
+- **Performance:** Docker containers start in seconds and use fewer resources because they share the host kernel.
+- **Boot Time:** Virtual Machines take longer to start since they run a full Guest OS.
+- **Resource Usage:** VMs require significantly more RAM and disk space than containers.
+- **Summary:** Docker is faster, more lightweight, and more efficient for application deployment than VMs.
 
 ### .env Files
 A `.env` file is a simple text file that holds environment variables in the format:
@@ -111,7 +104,7 @@ Environment variables are used to pass configuration into Docker containers with
 ### Docker Secrets
 Docker Secrets provide a secure way to store sensitive data like passwords, encryption keys, and certificates.
 
-- Secrets are encrypted at rest and in transit within Docker Swarm.  
+- Secrets are encrypted at rest and in transit (in Swarm mode).  
 - Only exposed to containers explicitly granted access.  
 - Mounted as files inside the container:  
 
@@ -120,12 +113,12 @@ Docker Secrets provide a secure way to store sensitive data like passwords, encr
 ```
 
 **Pros:**
-- Secure — encrypted and scoped to services that need them.  
+- Secure — encrypted (system-dependent) and scoped to services that need them.  
 - Not visible via `docker inspect`.  
-- Mounted in memory, not stored on disk inside the container.  
+- Mounted as files, usually in memory (tmpfs), not stored on disk inside the container.  
 
 **Cons:**
-- Only available in Docker Swarm mode.  
+- Slightly more complex setup than environment variables.
 - Applications must read secrets from files, not environment variables.
 
 ### Key Security Differences
@@ -215,9 +208,16 @@ It covers:
 ## Resources 
 - https://docs.docker.com/build/building/best-practices/
 - https://hub.docker.com/_/mariadb
-- https://github.com/MariaDB/mariadb-docker/blob/master/docker-entrypoint.sh?utm_source=chatgpt.com
+- https://github.com/MariaDB/mariadb-docker/blob/master/docker-entrypoint.sh
 - https://github.com/docker/awesome-compose
 - https://docs.nginx.com/tls
 - https://www.cyberciti.biz/faq/configure-nginx-to-use-only-tls-1-2-and-1-3/
 - https://hostim.dev/learn/foundations/env-vars-secrets/
 - https://docs.docker.com/get-started/workshop/05_persisting_data/
+
+### AI Usage
+AI tools (GitHub Copilot, ChatGPT) were used in this project for the following tasks:
+- **Debugging:** Analyzing error logs from Docker containers and suggesting fixes for configuration issues (e.g., Nginx SSL setup, MariaDB initialization).
+- **Explanation:** Clarifying concepts like the difference between Docker Volumes and Bind Mounts, or the specific syntax for Nginx configuration files.
+- **Scripting:** Assistance in writing and refining shell scripts (`setup.sh`, entrypoint scripts) to ensure robustness and proper error handling.
+- **Best Practices:** Providing recommendations for security (e.g., removing Port 80, using TLS 1.3) and folder structure optimization.
